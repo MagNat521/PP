@@ -1,0 +1,39 @@
+CREATE TABLE projects (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE columns (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  project_id INTEGER REFERENCES projects(id),
+  order_index INTEGER
+);
+
+CREATE TABLE tasks (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  column_id INTEGER REFERENCES columns(id),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE task_logs (
+  id SERIAL PRIMARY KEY,
+  task_id INTEGER REFERENCES tasks(id),
+  message TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE user_projects (
+  user_id INTEGER REFERENCES users(id),
+  project_id INTEGER REFERENCES projects(id),
+  PRIMARY KEY (user_id, project_id)
+);
