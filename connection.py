@@ -8,11 +8,11 @@ def init_db_pool():
     global postgresql_pool
     postgresql_pool = psycopg2.pool.SimpleConnectionPool(
         1, 10,
-        user="your_username",
-        password="your_password",
-        host="your_host",
+        user="task_manager_user",
+        password="S7r0ngP@ssw0rd",
+        host="localhost",
         port="your_port",
-        database="your_database"
+        database="project_db"
     )
 
 def get_connection():
