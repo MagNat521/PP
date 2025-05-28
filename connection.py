@@ -1,27 +1,24 @@
-import psycopg2
-from psycopg2 import pool
+import os
+import mysql.connector
+from mysql.connector import pooling
+from dotenv import load_dotenv
 
-# Инициализация пула соединений (лучше вынести параметры в конфиг)
-postgresql_pool = None
+load_dotenv()
 
-def init_db_pool():
-    global postgresql_pool
-    postgresql_pool = psycopg2.pool.SimpleConnectionPool(
-        1, 10,
-        user="task_manager_user",
-        password="S7r0ngP@ssw0rd",
-        host="localhost",
-        port="your_port",
-        database="project_db"
-    )
+dbconfig = {
+    "host": os.getenv("DB_HOST", "db"),
+    "user": os.getenv("DB_USER", "root"),
+    "password": os.getenv("DB_PASSWORD", "secret"),
+    "database": os.getenv("DB_NAME", "task_manager"),
+    "port": os.getenv("DB_PORT", "3306"),
+    "auth_plugin": 'mysql_native_password'  # Для MySQL 8.0+
+}
+
+connection_pool = pooling.MySQLConnectionPool(
+    pool_name="my_pool",
+    pool_size=5,
+    **dbconfig
+)
 
 def get_connection():
-    if postgresql_pool is None:
-        init_db_pool()
-    return postgresql_pool.getconn()
-
-def release_connection(conn):
-    postgresql_pool.putconn(conn)
-
-def close_all_connections():
-    postgresql_pool.closeall()
+    return connection_pool.get_connection()
